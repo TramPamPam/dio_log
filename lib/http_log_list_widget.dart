@@ -9,9 +9,9 @@ import 'page/log_widget.dart';
 ///网络请求日志列表
 class HttpLogListWidget extends StatefulWidget {
   final Widget Function(NetOptions netOptions, String reqTime, bool isError)?
-      customRequestItem;
+      customItemBuilder;
 
-  const HttpLogListWidget({Key? key, this.customRequestItem}) : super(key: key);
+  const HttpLogListWidget({Key? key, this.customItemBuilder}) : super(key: key);
 
   @override
   _HttpLogListWidgetState createState() => _HttpLogListWidgetState();
@@ -99,10 +99,11 @@ class _HttpLogListWidgetState extends State<HttpLogListWidget> {
     Color? textColor = LogPoolManager.getInstance().isError(item)
         ? Colors.red
         : Theme.of(context).textTheme.bodyText1!.color;
-    if (widget.customRequestItem != null) {
-      final listItem = widget.customRequestItem!(
+
+    if (widget.customItemBuilder != null) {
+      final listItem = widget.customItemBuilder!(
         item,
-        requestTime,
+        'requestTime: $requestTime    duration: ${resOpt?.duration ?? 0}ms',
         LogPoolManager.getInstance().isError(item),
       );
       return Card(
