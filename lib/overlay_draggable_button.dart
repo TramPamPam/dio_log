@@ -19,7 +19,11 @@ showDebugBtn(BuildContext context,
     dismissDebugBtn();
     itemEntry = OverlayEntry(
         builder: (BuildContext context) =>
-            button ?? DraggableButtonWidget(btnColor: btnColor));
+            button ??
+            DraggableButtonWidget(
+              btnColor: btnColor,
+              customItemBuilder: customItemBuilder,
+            ));
 
     ///显示悬浮menu
     Overlay.of(context)?.insert(itemEntry!);
