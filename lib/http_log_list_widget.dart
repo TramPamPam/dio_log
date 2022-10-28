@@ -6,10 +6,12 @@ import 'bean/net_options.dart';
 import 'dio_log.dart';
 import 'page/log_widget.dart';
 
+typedef CustomItemBuilder = Widget Function(
+    NetOptions netOptions, String reqTime, bool isError);
+
 ///网络请求日志列表
 class HttpLogListWidget extends StatefulWidget {
-  final Widget Function(NetOptions netOptions, String reqTime, bool isError)?
-      customItemBuilder;
+  final CustomItemBuilder? customItemBuilder;
 
   const HttpLogListWidget({Key? key, this.customItemBuilder}) : super(key: key);
 
@@ -40,7 +42,10 @@ class _HttpLogListWidgetState extends State<HttpLogListWidget> {
               if (debugBtnIsShow()) {
                 dismissDebugBtn();
               } else {
-                showDebugBtn(context);
+                showDebugBtn(
+                  context,
+                  customItemBuilder: widget.customItemBuilder,
+                );
               }
               setState(() {});
             },
