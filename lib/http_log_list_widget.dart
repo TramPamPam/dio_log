@@ -6,8 +6,15 @@ import 'bean/net_options.dart';
 import 'dio_log.dart';
 import 'page/log_widget.dart';
 
+typedef CustomItemBuilder = Widget Function(
+    NetOptions netOptions, String reqTime, bool isError);
+
 ///网络请求日志列表
 class HttpLogListWidget extends StatefulWidget {
+  final CustomItemBuilder? customItemBuilder;
+
+  const HttpLogListWidget({Key? key, this.customItemBuilder}) : super(key: key);
+
   @override
   _HttpLogListWidgetState createState() => _HttpLogListWidgetState();
 }
@@ -35,7 +42,10 @@ class _HttpLogListWidgetState extends State<HttpLogListWidget> {
               if (debugBtnIsShow()) {
                 dismissDebugBtn();
               } else {
-                showDebugBtn(context);
+                showDebugBtn(
+                  context,
+                  customItemBuilder: widget.customItemBuilder,
+                );
               }
               setState(() {});
             },
@@ -94,6 +104,30 @@ class _HttpLogListWidgetState extends State<HttpLogListWidget> {
     Color? textColor = LogPoolManager.getInstance().isError(item)
         ? Colors.red
         : Theme.of(context).textTheme.bodyText1!.color;
+
+    if (widget.customItemBuilder != null) {
+      final listItem = widget.customItemBuilder!(
+        item,
+        'requestTime: $requestTime    duration: ${resOpt?.duration ?? 0}ms',
+        LogPoolManager.getInstance().isError(item),
+      );
+      return Card(
+        margin: EdgeInsets.all(8),
+        elevation: 6,
+        child: InkWell(
+          onTap: () {
+            Navigator.push(context, MaterialPageRoute(builder: (context) {
+              return LogWidget(item);
+            }));
+          },
+          child: Container(
+            width: double.infinity,
+            padding: EdgeInsets.all(8.0),
+            child: listItem,
+          ),
+        ),
+      );
+    }
     return Card(
       margin: EdgeInsets.all(8),
       elevation: 6,

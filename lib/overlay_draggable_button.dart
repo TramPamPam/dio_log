@@ -9,14 +9,21 @@ import 'dio_log.dart';
 OverlayEntry? itemEntry;
 
 ///显示全局悬浮调试按钮
-showDebugBtn(BuildContext context, {Widget? button, Color? btnColor}) async {
+showDebugBtn(BuildContext context,
+    {Widget? button,
+    Color? btnColor,
+    CustomItemBuilder? customItemBuilder}) async {
   ///widget第一次渲染完成
   try {
     await Future.delayed(Duration(milliseconds: 500));
     dismissDebugBtn();
     itemEntry = OverlayEntry(
         builder: (BuildContext context) =>
-            button ?? DraggableButtonWidget(btnColor: btnColor));
+            button ??
+            DraggableButtonWidget(
+              btnColor: btnColor,
+              customItemBuilder: customItemBuilder,
+            ));
 
     ///显示悬浮menu
     Overlay.of(context)?.insert(itemEntry!);
@@ -39,13 +46,14 @@ class DraggableButtonWidget extends StatefulWidget {
   final Function? onTap;
   final double btnSize;
   final Color? btnColor;
+  final CustomItemBuilder? customItemBuilder;
 
-  DraggableButtonWidget({
-    this.title = 'http log',
-    this.onTap,
-    this.btnSize = 66,
-    this.btnColor,
-  });
+  DraggableButtonWidget(
+      {this.title = 'http log',
+      this.onTap,
+      this.btnSize = 66,
+      this.btnColor,
+      this.customItemBuilder});
 
   @override
   _DraggableButtonWidgetState createState() => _DraggableButtonWidgetState();
@@ -71,7 +79,9 @@ class _DraggableButtonWidgetState extends State<DraggableButtonWidget> {
     var tap = () {
       Navigator.of(context).push(
         MaterialPageRoute(
-          builder: (context) => HttpLogListWidget(),
+          builder: (context) => HttpLogListWidget(
+            customItemBuilder: widget.customItemBuilder,
+          ),
         ),
       );
     };
